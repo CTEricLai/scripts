@@ -27,6 +27,8 @@ print "|                                   Last updated: 5/21/2018 |"
 print "|===========================================================|"
 print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* basis set  |"
 print "|       2. RESP uses two steps fitting                      |"
+print "|       3. Multiplicity: singlets (1), doublets (2),        |" 
+print "|          triplets (3), quartets (4), etc.                 |"
 print "|                                                           |"
 print "| Use -h to show the help message                           |"
 print "| Example: GAMESS_RESP.py -fi mol2 -i ben.mol               |"
@@ -43,7 +45,7 @@ parser.add_argument('-o', help='Output file (default: final_resp.mol2)',
 parser.add_argument('-c', help='Net Charge (default: 0)',
                           required=False, dest='charge', default=0)
 parser.add_argument('-s', help='Spin multiplicity (default: 1)',
-                          required=False, dest='spin', default=1)
+                          required=False, dest='mult', default=1)
 parser.add_argument('-n', help='Number of CPU core(s) in GAMESS calculation (default: 1)',
                           required=False, dest='cpu', default=1)
 
@@ -51,7 +53,7 @@ args=parser.parse_args()
 
 file = args.file
 charge = args.charge
-mult = args.spin
+mult = args.mult
 cpu = str(args.cpu)
 
 if(args.file_type == 'pdb'):
@@ -61,13 +63,18 @@ else:
 
 os.system(command)
 
+if(mult == 1):
+    scf = 'RHF'
+else:
+    scf = 'ROHF'
+
 # Create GAMESS optimization input file
 outfile=open('b.inp', 'w')
 
 texthead = "! Geometry optimization\n" + \
 " $CONTRL  ICHARG=" + str(charge) + ' MULT=' + str(mult) + " RUNTYP=OPTIMIZE\n" + \
 "          MAXIT=128 UNITS=ANGS MPLEVL=0 EXETYP=RUN\n" + \
-"          SCFTYP=RHF\n" + \
+"          SCFTYP=" + scf + "\n" + \
 "          COORD=UNIQUE\n" + \
 "          DFTTYP=NONE                                  $END\n" + \
 " $SCF     DIRSCF=.T. CONV=1.0E-08 FDIFF=.F.            $END\n" + \
@@ -119,7 +126,7 @@ if(error_check == 0):
     texthead="! Single point to get ESP\n" + \
     " $CONTRL ICHARG=" + str(charge) + " MULT=" + str(mult) + " RUNTYP=ENERGY MOLPLT=.T.\n" + \
     "         MPLEVL=0 UNITS=ANGS MAXIT=128 EXETYP=RUN\n" + \
-    "         SCFTYP=RHF\n" + \
+    "         SCFTYP=" + scf + "\n" + \
     "         COORD=UNIQUE\n" + \
     "         DFTTYP=NONE                                   $END\n" + \
     " $SCF    DIRSCF=.T. CONV=1.0E-07                       $END\n" + \
@@ -195,7 +202,7 @@ if(error_check ==0):
 
     coor_matrix *= 1.88972666
 
-    outfile.write("%5d%5d%5d\n" % (natoms, ngrids, charge))
+    outfile.write("%5d%5d%5s\n" % (natoms, ngrids, charge))
 
     for i in range(0, natoms):
 	outfile.write("                %16.7E%16.7E%16.7E\n" % (coor_matrix[i][0], coor_matrix[i][1], coor_matrix[i][2]))
