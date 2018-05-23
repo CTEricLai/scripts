@@ -2,7 +2,7 @@
 #
 # Cheng-Tsung Lai
 # Email: chengtsung.lai@gmail.com
-# 5/21/2018
+# 5/23/2018
 
 # The following programs are need for this script
 # 1. GAMESS
@@ -23,7 +23,7 @@ print "|         Generate partical charges with GAMESS/RESP        |"
 print "|-----------------------------------------------------------|"
 print "|                                       By: Cheng-Tsung Lai |"
 print "|                          E-mail: chengtsung.lai@gmail.com |"
-print "|                                   Last updated: 5/21/2018 |"
+print "|                                   Last updated: 5/23/2018 |"
 print "|===========================================================|"
 print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* basis set  |"
 print "|       2. RESP uses two steps fitting                      |"
@@ -40,8 +40,6 @@ parser.add_argument('-fi', help='Input file format (pdb or mol2)',
                           required=True, dest='file_type')
 parser.add_argument('-i', help='Input file',
                           required=True, dest='file')
-parser.add_argument('-o', help='Output file (default: final_resp.mol2)',
-                          required=False, dest='final_file', default='final_resp.mol2')
 parser.add_argument('-c', help='Net Charge (default: 0)',
                           required=False, dest='charge', default=0)
 parser.add_argument('-s', help='Spin multiplicity (default: 1)',
@@ -55,6 +53,7 @@ file = args.file
 charge = args.charge
 mult = args.mult
 cpu = str(args.cpu)
+mol2_file = file.split(".")[0] + '_resp.mol2'
 
 if(args.file_type == 'pdb'):
 	command = 'babel -i pdb ' + file + ' -o gamin a.inp'
@@ -218,13 +217,13 @@ if(error_check ==0):
     os.system("respgen -e 2 -i f.ac -o resp2.in -f resp2")
     os.system("resp -O -i resp1.in -o resp1.out -e esp.in -t resp1.qin")
     os.system("resp -O -i resp2.in -o resp2.out -e esp.in -q resp1.qin -t resp2.qin")
-    command = "antechamber -s 0 -dr n -fi ac -fo mol2 -i f.ac -o " + args.final_file + " -c rc -cf resp2.qin"
+    command = "antechamber -s 0 -dr n -fi ac -fo mol2 -i f.ac -o " + mol2_file + " -c rc -cf resp2.qin"
     os.system(command)
 
     print "Finished RESP\n"
 
 # zip file and delete temperary files
-    command = "tar zcvf " + file + "_resp.tar.gz opt.log esp.dat esp.log esp.in " + args.final_file + ' ' + file
+    command = "tar zcvf " + file + "_resp.tar.gz opt.log esp.dat esp.log esp.in " + mol2_file + ' ' + file
     os.system(command)
     os.system("rm opt.log a.inp b.inp c.inp d.inp e.mol2 f.ac resp1.* resp2.* ANTECHAMBER_* ATOMTYPE.INF punch esout esp.in esp.dat esp.log") 
 
