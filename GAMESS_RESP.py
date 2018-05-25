@@ -2,7 +2,7 @@
 #
 # Cheng-Tsung Lai
 # Email: chengtsung.lai@gmail.com
-# 5/23/2018
+# 5/25/2018
 
 # The following programs are need for this script
 # 1. GAMESS
@@ -23,7 +23,7 @@ print "|         Generate partical charges with GAMESS/RESP        |"
 print "|-----------------------------------------------------------|"
 print "|                                       By: Cheng-Tsung Lai |"
 print "|                          E-mail: chengtsung.lai@gmail.com |"
-print "|                                   Last updated: 5/23/2018 |"
+print "|                                   Last updated: 5/25/2018 |"
 print "|===========================================================|"
 print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* basis set  |"
 print "|       2. RESP uses two steps fitting                      |"
@@ -56,9 +56,9 @@ cpu = str(args.cpu)
 mol2_file = file.split(".")[0] + '_resp.mol2'
 
 if(args.file_type == 'pdb'):
-	command = 'babel -i pdb ' + file + ' -o gamin a.inp'
+	command = 'babel -h -i pdb ' + file + ' -o gamin a.inp'
 else:
-	command = 'babel -i ml2 ' + file + ' -o gamin a.inp'
+	command = 'babel -h -i ml2 ' + file + ' -o gamin a.inp'
 
 os.system(command)
 
