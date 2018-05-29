@@ -4,7 +4,7 @@
 # Email: chengtsung.lai@gmail.com
 # 5/29/2018
 
-# The following programs are need for this script
+# The following programs are required for this script
 # 1. GAMESS
 GAMESS_PATH='/home/ahtsung/Programs/gamess/rungms'
 GAMESS_SCR_PATH='/home/ahtsung/scr'
@@ -30,6 +30,8 @@ print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* or         |"
 print "|          DFT B3LYP/6-31G* (default)                       |"
 print "|       2. RESP uses two steps fitting                      |"
 print "|       3. Multiplicity: singlets (1), doublets (2), etc.   |" 
+print "|       4. This script does NOT check every possible error  |"
+print "|          may arise during the whole calcution.            |"
 print "|                                                           |"
 print "| Use -h to show the help message                           |"
 print "| Example: GAMESS_RESP.py -fi pdb -i A.pdb                  |"
