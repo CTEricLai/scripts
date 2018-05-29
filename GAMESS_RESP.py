@@ -144,7 +144,7 @@ if(error_check == 0):
         "          DFTTYP=NONE                                  $END\n"
     texthead += \
     " $SCF    DIRSCF=.T. CONV=1.0E-07                       $END\n" + \
-    " $SYSTEM TIMLIM=5000 MWORDS=1024 MEMDDI=0              $END\n" + \
+    " $SYSTEM TIMLIM=50000 MWORDS=1024 MEMDDI=0             $END\n" + \
     " $BASIS  GBASIS=N31 NGAUSS=6 NDFUNC=1                  $END\n" + \
     " $GUESS  GUESS=HUCKEL                                  $END\n" + \
     " $ELPOT  IEPOT=1 WHERE=PDC OUTPUT=PUNCH                $END\n" + \
