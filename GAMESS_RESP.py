@@ -2,7 +2,7 @@
 #
 # Cheng-Tsung Lai
 # Email: chengtsung.lai@gmail.com
-# 5/25/2018
+# 5/29/2018
 
 # The following programs are need for this script
 # 1. GAMESS
@@ -10,7 +10,6 @@ GAMESS_PATH='/home/ahtsung/Programs/gamess/rungms'
 GAMESS_SCR_PATH='/home/ahtsung/scr'
 # 2. antechamber and resp from AMBER
 # 3. openbabel
-
 
 # Begin of Script
 import os
@@ -20,18 +19,19 @@ import argparse
 print "\n"
 print "+===========================================================+"
 print "|         Generate partical charges with GAMESS/RESP        |"
+print "|                       Ver. 1.0.529                        |"
 print "|-----------------------------------------------------------|"
 print "|                                       By: Cheng-Tsung Lai |"
 print "|                          E-mail: chengtsung.lai@gmail.com |"
-print "|                                   Last updated: 5/25/2018 |"
+print "|                                   Last updated: 5/29/2018 |"
 print "|===========================================================|"
-print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* basis set  |"
+print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* or         |"
+print "|          DFT B3LYP/6-31G* (default)                       |"
 print "|       2. RESP uses two steps fitting                      |"
-print "|       3. Multiplicity: singlets (1), doublets (2),        |" 
-print "|          triplets (3), quartets (4), etc.                 |"
+print "|       3. Multiplicity: singlets (1), doublets (2), etc.   |" 
 print "|                                                           |"
 print "| Use -h to show the help message                           |"
-print "| Example: GAMESS_RESP.py -fi mol2 -i ben.mol               |"
+print "| Example: GAMESS_RESP.py -fi pdb -i A.pdb                  |"
 print "+===========================================================+"
 print "\n"
 
@@ -40,11 +40,13 @@ parser.add_argument('-fi', help='Input file format (pdb or mol2)',
                           required=True, dest='file_type')
 parser.add_argument('-i', help='Input file',
                           required=True, dest='file')
-parser.add_argument('-c', help='Net Charge (default: 0)',
+parser.add_argument('-nc', help='Net Charge (default: 0)',
                           required=False, dest='charge', default=0)
-parser.add_argument('-s', help='Spin multiplicity (default: 1)',
+parser.add_argument('-sp', help='Spin multiplicity (default: 1)',
                           required=False, dest='mult', default=1)
-parser.add_argument('-n', help='Number of CPU core(s) in GAMESS calculation (default: 1)',
+parser.add_argument('-qt', help='QM function: (1)B3LYP/6-31G* or (2)HF/6-31G* (default: 1)',
+                          required=False, dest='QM_type', default=1)
+parser.add_argument('-np', help='Number of CPU core(s) in GAMESS calculation (default: 1)',
                           required=False, dest='cpu', default=1)
 
 args=parser.parse_args()
@@ -52,6 +54,7 @@ args=parser.parse_args()
 file = args.file
 charge = args.charge
 mult = args.mult
+qm_type = args.QM_type
 cpu = str(args.cpu)
 mol2_file = file.split(".")[0] + '_resp.mol2'
 
@@ -74,8 +77,14 @@ texthead = "! Geometry optimization\n" + \
 " $CONTRL  ICHARG=" + str(charge) + ' MULT=' + str(mult) + " RUNTYP=OPTIMIZE\n" + \
 "          MAXIT=128 UNITS=ANGS MPLEVL=0 EXETYP=RUN\n" + \
 "          SCFTYP=" + scf + "\n" + \
-"          COORD=UNIQUE\n" + \
-"          DFTTYP=NONE                                  $END\n" + \
+"          COORD=UNIQUE\n"
+if(qm_type == 1):
+    texthead += \
+    "          DFTTYP=B3LYP                                 $END\n"
+else:
+    texthead += \
+    "          DFTTYP=NONE                                  $END\n"
+texthead += \
 " $SCF     DIRSCF=.T. CONV=1.0E-08 FDIFF=.F.            $END\n" + \
 " $SYSTEM  TIMLIM=50000 MWORDS=1024 MEMDDI=0            $END\n" + \
 " $BASIS   GBASIS=N31 NGAUSS=6 DIFFSP=.F.\n" + \
@@ -126,8 +135,14 @@ if(error_check == 0):
     " $CONTRL ICHARG=" + str(charge) + " MULT=" + str(mult) + " RUNTYP=ENERGY MOLPLT=.T.\n" + \
     "         MPLEVL=0 UNITS=ANGS MAXIT=128 EXETYP=RUN\n" + \
     "         SCFTYP=" + scf + "\n" + \
-    "         COORD=UNIQUE\n" + \
-    "         DFTTYP=NONE                                   $END\n" + \
+    "         COORD=UNIQUE\n"
+    if(qm_type == 1):
+        texthead += \
+        "          DFTTYP=B3LYP                                 $END\n"
+    else:
+        texthead += \
+        "          DFTTYP=NONE                                  $END\n"
+    texthead += \
     " $SCF    DIRSCF=.T. CONV=1.0E-07                       $END\n" + \
     " $SYSTEM TIMLIM=5000 MWORDS=1024 MEMDDI=0              $END\n" + \
     " $BASIS  GBASIS=N31 NGAUSS=6 NDFUNC=1                  $END\n" + \
@@ -225,5 +240,4 @@ if(error_check ==0):
 # zip file and delete temperary files
     command = "tar zcvf " + file + "_resp.tar.gz opt.log esp.dat esp.log esp.in " + mol2_file + ' ' + file
     os.system(command)
-    os.system("rm opt.log a.inp b.inp c.inp d.inp e.mol2 f.ac resp1.* resp2.* ANTECHAMBER_* ATOMTYPE.INF punch esout esp.in esp.dat esp.log") 
-
+    os.system("rm opt.log a.inp b.inp c.inp d.inp e.mol2 f.ac resp1.* resp2.* ANTECHAMBER_* ATOMTYPE.INF punch esout esp.in esp.dat esp.log")
