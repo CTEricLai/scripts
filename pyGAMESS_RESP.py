@@ -63,7 +63,7 @@ mol2_file = file.split(".")[0] + '_resp.mol2'
 if(args.file_type == 'pdb'):
 	command = 'babel -h -i pdb ' + file + ' -o gamin a.inp'
 else:
-	command = 'babel -h -i ml2 ' + file + ' -o gamin a.inp'
+	command = 'babel -h -i mol2 ' + file + ' -o gamin a.inp'
 
 os.system(command)
 
