@@ -26,11 +26,13 @@ print "|                                             Cheng-Tsung Lai, Ph.D  |"
 print "|                                  E-mail: chengtsung.lai@gmail.com  |"
 print "|                                           Last updated: 5/29/2018  |"
 print "|====================================================================|"
-print "| Note: 1. GAMESS optimization/ESP can chosse HF/6-31G* (default) or |"
+print "| Note: 1. This script does NOT check every possible error.          |"
+print "|       2. The initial file must contain correct protonation state   |"
+print "|          (ie. explict hydrogen atoms).                             |"
+print "|       4. GAMESS optimization/ESP can chosse HF/6-31G* (default) or |"
 print "|          DFT B3LYP/6-31G*.                                         |"
-print "|       2. RESP uses two steps fitting.                              |"
-print "|       3. Multiplicity: singlets (1), doublets (2), etc.            |" 
-print "|       4. This script does NOT check every possible error.          |"
+print "|       5. Multiplicity: singlets (1), doublets (2), etc.            |"
+print "|       6. RESP uses two steps fitting.                              |"
 print "|                                                                    |"
 print "| Use -h to show the help message.                                   |"
 print "| Example: pyGAMESS_RESP.py -fi pdb -i A.pdb                         |"
@@ -61,9 +63,9 @@ cpu = str(args.cpu)
 mol2_file = file.split(".")[0] + '_resp.mol2'
 
 if(args.file_type == 'pdb'):
-	command = 'babel -h -i pdb ' + file + ' -o gamin a.inp'
+	command = 'babel -i pdb ' + file + ' -o gamin a.inp'
 else:
-	command = 'babel -h -i mol2 ' + file + ' -o gamin a.inp'
+	command = 'babel -i mol2 ' + file + ' -o gamin a.inp'
 
 os.system(command)
 
