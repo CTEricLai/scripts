@@ -17,25 +17,24 @@ import numpy as np
 import argparse
 
 print "\n"
-print "+===========================================================+"
-print "|         Generate partical charges with GAMESS/RESP        |"
-print "|                       Ver. 1.0.529                        |"
-print "|   Copyright 2018, Cheng-Tsung Lai, All rights reserved.   |"
-print "|-----------------------------------------------------------|"
-print "|                                       By: Cheng-Tsung Lai |"
-print "|                          E-mail: chengtsung.lai@gmail.com |"
-print "|                                   Last updated: 5/29/2018 |"
-print "|===========================================================|"
-print "| Note: 1. GAMESS optimization/ESP use HF/6-31G* or         |"
-print "|          DFT B3LYP/6-31G* (default)                       |"
-print "|       2. RESP uses two steps fitting                      |"
-print "|       3. Multiplicity: singlets (1), doublets (2), etc.   |" 
-print "|       4. This script does NOT check every possible error  |"
-print "|          may arise during the whole calcution.            |"
-print "|                                                           |"
-print "| Use -h to show the help message                           |"
-print "| Example: GAMESS_RESP.py -fi pdb -i A.pdb                  |"
-print "+===========================================================+"
+print "+====================================================================+"
+print "|             Generate partical charges with GAMESS/RESP             |"
+print "|                           Ver. 1.0.529                             |"
+print "|       Copyright 2018, Cheng-Tsung Lai, All rights reserved.        |"
+print "|--------------------------------------------------------------------|"
+print "|                                             Cheng-Tsung Lai, Ph.D  |"
+print "|                                  E-mail: chengtsung.lai@gmail.com  |"
+print "|                                           Last updated: 5/29/2018  |"
+print "|====================================================================|"
+print "| Note: 1. GAMESS optimization/ESP can chosse HF/6-31G* (default) or |"
+print "|          DFT B3LYP/6-31G*.                                         |"
+print "|       2. RESP uses two steps fitting.                              |"
+print "|       3. Multiplicity: singlets (1), doublets (2), etc.            |" 
+print "|       4. This script does NOT check every possible error.          |"
+print "|                                                                    |"
+print "| Use -h to show the help message.                                   |"
+print "| Example: pyGAMESS_RESP.py -fi pdb -i A.pdb                         |"
+print "+====================================================================+"
 print "\n"
 
 parser = argparse.ArgumentParser(description='Generate partical charges with GAMESS/RESP')
@@ -47,7 +46,7 @@ parser.add_argument('-nc', help='Net Charge (default: 0)',
                           required=False, dest='charge', default=0)
 parser.add_argument('-sp', help='Spin multiplicity (default: 1)',
                           required=False, dest='mult', default=1)
-parser.add_argument('-qt', help='QM function: (1)B3LYP/6-31G* or (2)HF/6-31G* (default: 1)',
+parser.add_argument('-qt', help='QM function: (1)HF/6-31G* or (2)B3LYP/6-31G* (default: 1)',
                           required=False, dest='QM_type', default=1)
 parser.add_argument('-np', help='Number of CPU core(s) in GAMESS calculation (default: 1)',
                           required=False, dest='cpu', default=1)
@@ -79,9 +78,8 @@ outfile=open('b.inp', 'w')
 texthead = "! Geometry optimization\n" + \
 " $CONTRL  ICHARG=" + str(charge) + ' MULT=' + str(mult) + " RUNTYP=OPTIMIZE\n" + \
 "          MAXIT=128 UNITS=ANGS MPLEVL=0 EXETYP=RUN\n" + \
-"          SCFTYP=" + scf + "\n" + \
-"          COORD=UNIQUE\n"
-if(qm_type == 1):
+"          SCFTYP=" + scf + " COORD=UNIQUE\n"
+if(qm_type == 2):
     texthead += \
     "          DFTTYP=B3LYP                                 $END\n"
 else:
@@ -137,9 +135,8 @@ if(error_check == 0):
     texthead="! Single point to get ESP\n" + \
     " $CONTRL ICHARG=" + str(charge) + " MULT=" + str(mult) + " RUNTYP=ENERGY MOLPLT=.T.\n" + \
     "         MPLEVL=0 UNITS=ANGS MAXIT=128 EXETYP=RUN\n" + \
-    "         SCFTYP=" + scf + "\n" + \
-    "         COORD=UNIQUE\n"
-    if(qm_type == 1):
+    "         SCFTYP=" + scf + " COORD=UNIQUE\n"
+    if(qm_type == 2):
         texthead += \
         "          DFTTYP=B3LYP                                 $END\n"
     else:
