@@ -2,7 +2,7 @@
 #
 # Cheng-Tsung Lai
 # Email: chengtsung.lai@gmail.com
-# 5/29/2018
+# 6/11/2018
 
 # The following programs are required for this script
 # 1. GAMESS
@@ -19,12 +19,12 @@ import argparse
 print "\n"
 print "+====================================================================+"
 print "|             Generate partical charges with GAMESS/RESP             |"
-print "|                           Ver. 1.0.529                             |"
+print "|                           Ver. 1.0.611                             |"
 print "|       Copyright 2018, Cheng-Tsung Lai, All rights reserved.        |"
 print "|--------------------------------------------------------------------|"
 print "|                                             Cheng-Tsung Lai, Ph.D  |"
 print "|                                  E-mail: chengtsung.lai@gmail.com  |"
-print "|                                           Last updated: 5/29/2018  |"
+print "|                                           Last updated: 6/11/2018  |"
 print "|====================================================================|"
 print "| Note: 1. This script does NOT check every possible error.          |"
 print "|       2. The initial file must contain correct protonation state   |"
@@ -57,8 +57,8 @@ args=parser.parse_args()
 
 file = args.file
 charge = args.charge
-mult = args.mult
-qm_type = args.QM_type
+mult = int(args.mult)
+qm_type = int(args.QM_type)
 cpu = str(args.cpu)
 mol2_file = file.split(".")[0] + '_resp.mol2'
 
